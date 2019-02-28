@@ -1,0 +1,71 @@
+#项目启动
+server:
+  port: 8081
+  session-timeout: 3000000
+  context-path: /mvc    #　配置访问时的项目名
+
+ # 应用信息说明
+info:
+  app:
+    name: Sprig MVC Server
+    description: Sprig MVC 框架及集成相关服务
+    version: 1.0.0
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    max-active: 10
+    max-idle: 10
+    min-idle: 6
+    idle-timeout: 3000
+    testOnBorrow: true
+    validationQuery: SELECT 1
+    num-tests-per-eviction-run: 10 #在每次空闲连接回收器线程(如果有)运行时检查的连接数量，最好和maxActive
+    test-while-idle: true #指明连接是否被空闲连接回收器(如果有)进行检验，如果检测失败，则连接将被从池中去除
+    min-evictable-idle-time-millis: 3600000 #连接池中连接，在时间段内一直空闲，被逐出连接池的时间(1000*60*60)，以毫秒为单位
+    time-between-eviction-runs-millis: 300000 #在空闲连接回收器线程运行期间休眠的时间值,以毫秒为单位，一般比minEvictableIdleTimeMillis小
+
+---
+spring:
+  profiles:
+    active: dev
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/sshc?useUnicode:true&amp;characterEncoding=utf-8&amp;autoReconnect=true
+    username: root
+    password: admin
+
+#  redis:
+#    host: 172.19.103.88 # Redis server host.
+#    port: 6379 # Redis server port.
+#  # password: jkzl_ehr
+#    timeout: 120000 # 连接超时时间（毫秒） 60秒
+#    pool:
+#      max-active: 20 # 连接池最大连接数（使用负值表示没有限制）
+#      max-wait: -1  # 连接池最大阻塞等待时间（使用负值表示没有限制）
+#      max-idle: 20  # 连接池中的最大空闲连接
+#      min-idle: 5  # 连接池中的最小空闲连接
+
+  data:
+    solr:
+      zk-host: master,master:2181
+
+kafka:
+  broker:
+    address: slave1:9092
+    groupName: sep-hbase-data
+
+elasticsearch:
+  cluster-name: elasticsearch
+  cluster-nodes: master:9300
+
+hadoop:
+  hbase-properties:
+    hbase.zookeeper.quorum: slave1
+
+service-gateway:
+  username: janseny
+  password: admin
+  url: http://localhost:8091/
+
+

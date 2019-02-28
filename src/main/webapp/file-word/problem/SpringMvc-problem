@@ -1,0 +1,13 @@
+
+1.1：
+@SpringBootTest 标注一个测试类，如果该注解没有指定加载的启动配置类，
+那么会自动搜索标注有@SpringBootApplication注解的类。如果需要手工指定，
+那么通过注解的classes属性即可。找到启动类后注入服务，随后可以进行测试。
+
+1.2：springboot 工程启动报错之Consider defining a bean of type ‘XXX’ in your configuration.
+①将接口与对应的实现类放在与application启动类的同一个目录或者他的子目录下，这样注解可以被扫描到，这是最省事的办法。（没测试）
+②或者在启动类上加上@MapperScan或者@ComponentScan注解，手动指定application类要扫描哪些包下的注解，如下所示：
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.xxx.xxx.dao"})
+
+1.3：

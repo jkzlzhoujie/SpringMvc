@@ -1,0 +1,5 @@
+
+
+
+准备：初始化 10张表数据  文件夹sql下  quartz.sql
+    quartz 配置及 集群配置 参考文件 quartz分布式集群配置及使用.doc
