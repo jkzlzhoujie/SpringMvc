@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.controller.user;
 
 import com.example.demo.common.export.WorkbookUtil;
 import com.example.demo.common.quartz.SchedulerHelper;
@@ -24,7 +24,7 @@ import java.util.*;
  * Created by janseny on 2018/11/29.
  */
 @Controller
-@RequestMapping("admin/cmUser")
+@RequestMapping("/cmUser")
 public class CmUserController extends BaseController {
     @Autowired
     private CmUserService cmUserService;
@@ -32,6 +32,13 @@ public class CmUserController extends BaseController {
     private SolrUtil solrUtil;
     @Autowired
     private SchedulerHelper schedulerHelper;
+
+    @RequestMapping(value = "/getUserList",method = RequestMethod.GET)
+    public String getUserList() throws Exception {
+        String result = "user/userList";
+        System.out.println(result);
+        return result;
+    }
 
     @RequestMapping(value = "solrTest",method = RequestMethod.GET)
     public void testSolr() throws Exception {
@@ -55,20 +62,35 @@ public class CmUserController extends BaseController {
     }
 
 
+    @ResponseBody
     @RequestMapping(value = "findByName",method = RequestMethod.GET)
-    public String findByName(
+    public CmUserInfo findByName(
             @ApiParam(name = "name", value = "姓名", required = false)
             @RequestParam(value = "name",required = false)String name ){
-          cmUserService.findByName(name);
-        return "user/user";
+          CmUserInfo cmUserInfo = cmUserService.findByName(name);
+          if(cmUserInfo != null){
+              System.out.println("用户：" + cmUserInfo.getName());
+          }else {
+              System.out.println("么有找到用户");
+          }
+        return cmUserInfo;
     }
 
-    @RequestMapping(value = "findById",method = RequestMethod.GET)
     @ResponseBody
+    @RequestMapping(value = "findAllUser",method = RequestMethod.GET,produces = "application/json;charset=utf-8")
+    public Object findByName(){
+        List<CmUserInfo> userInfos = cmUserService.findAll();
+        System.out.println("总共有用户：" + userInfos.size());
+        return userInfos;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "findById",method = RequestMethod.GET)
     public Object findById(
             @ApiParam(name = "id", value = "自增ID", required = false)
             @RequestParam(value = "id",required = false)long id ){
-        return  cmUserService.findById(id);
+        CmUserInfo cmUserInfo = cmUserService.findById(id);
+        return cmUserInfo;
     }
 
     @RequestMapping(value = "export",method = RequestMethod.GET)

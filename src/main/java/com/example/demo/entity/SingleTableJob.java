@@ -1,4 +1,4 @@
-package com.example.demo.job;
+package com.example.demo.entity;
 
 import com.example.demo.common.kafka.Producer;
 import com.example.demo.common.sql.DbKit;

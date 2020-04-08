@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -6,7 +7,8 @@
 </head>
 <body>
 
-    <h1> 欢迎进入 SpringMvc 首页</h1>
-    <h2>  由MVC 方式跳转 -- jsp  </h2>
+    <h1 align="center"> 欢迎进入 SpringMvc  首页</h1>
+    <h1 align="center">SpringBoot 搭建 MVC 项目</h1>
+    <h2> spring index.jsp  </h2>
 </body>
 </html>

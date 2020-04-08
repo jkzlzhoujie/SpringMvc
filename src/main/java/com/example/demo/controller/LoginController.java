@@ -9,25 +9,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @Controller
-@RequestMapping("login")
 public class LoginController {
 
-    @RequestMapping(value = "index",method = RequestMethod.GET)
+    @RequestMapping(value = "/index",produces="application/json;charset=utf-8")
     public String index(){
-        System.out.println("/login/index");
+        System.out.println("login/index");
         return "login/index";
     }
 
-    @RequestMapping(value = "login",method = RequestMethod.GET)
+    @RequestMapping(value = "/welcome",produces="application/json;charset=utf-8")
     public String login(){
-        System.out.println("login--");
+        System.out.println("/login/login");
         return "login/login";
     }
 
-    @RequestMapping(value = "loginPost",method = RequestMethod.POST)
-    public String login2(){
-        System.out.println("login");
-        return "login/login";
+    @RequestMapping(value = "/home",produces="application/json;charset=utf-8")
+    public String home(){
+        System.out.println("/login/home");
+        return "login/home";
     }
 
 }

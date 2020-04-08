@@ -1,0 +1,23 @@
+
+1；2020年4月6日21:04:36 可以正常访问jsp页面，页面跳转
+    http://localhost:8080/admin/cmUser/findByName
+
+可以正常的数据返回  -- @ResponseBody
+    http://localhost:8080/admin/cmUser/findAllUser
+
+2：数据可以从数据库查询后返回
+    http://localhost:8080/admin/cmUser/findById?id=9
+    {"id":9,"name":"恺","sex":1,"age":null,"phone":"15160050025","city":1,"work":null,"openId":"oLmELwtnYSOAzNfHd_00vAP5_hoA","headImageUrl":"http://wx.qlogo.cn/mmopen/C0Z8nqtGGy4SA3Cv7mjT8ncPl8Z4DbZlOsibqF4zKxsuGaKJd7jG8d6pZsPw19oJu7Vwn5uibhMeFbqzibjZ86TbYVsRIeWJ80q/0","wallet":0.01,"status":1,"createTime":1480490915000,"updateTime":null}
+
+3：swagger-ui
+    http://localhost:8080/swagger-ui.html
+
+4：静态资源文件夹 static ,WEB-INF/jsp 指定web视图解析跳转文件夹
+    Spring Boot 默认为我们提供了静态资源处理，我建议大家直接使用Spring Boot的默认配置即可。默认提供的静态资源映射如下:
+        classpath:/META-INF/resources
+    classpath:/resources
+    classpath:/static
+    classpath:/public
+    这些目录的静态资源时可以直接访问到的。上面这几个都是静态资源的映射路径，优先级顺序为：META-INF/resources > resources > static > public
+    使用第一讲中spring initilize工具创建的springboot工程，默认也给我们创建了classpath:/static这个目录
+    https://www.cnblogs.com/luchangjiang/p/10805951.html

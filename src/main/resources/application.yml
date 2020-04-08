@@ -2,7 +2,7 @@
 server:
   port: 8081
   session-timeout: 3000000
-  context-path: /mvc    #　配置访问时的项目名
+  context-path: /    #　配置访问时的项目名
 
  # 应用信息说明
 info:
