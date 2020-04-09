@@ -28,50 +28,36 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //下面这两行配置表示在内存中配置了两个用户 密码明文：123
-        auth.inMemoryAuthentication()
-                .withUser("admin").roles("administrator").password("$2a$10$OR3VSksVAmCzc.7WeaRPR.t0wyCsIj24k0Bne8iKWV1o.V9wsP8Xe")
-                .and()
-                .withUser("janseny").roles("user").password("$2a$10$p1H8iWa8I4.CA.7Z8bwLjes91ZpY.rYREGHQEInNtAp4NzL6PLKxi");
-    }
-
-    //设置密码的加密方式
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
+    /**
+     * 静态资源被拦截的问题  设置拦截规则
+     *
+     **/
     @Override
     public void configure(WebSecurity web) throws Exception {
-        //解决静态资源被拦截的问题  设置不拦截规则
-        web.ignoring().antMatchers(
+        web.ignoring().antMatchers(  //ignoring 不拦截
                 "/bo/**",
                 "/login/**",
-                "/swagger**"
+                "/swagger/**"
         );
     }
 
+    /**
+     * 设置  Http 请求的 拦截规则
+     **/
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        // 设置拦截规则
-            http
-                .formLogin()       //  定义当需要用户登录时候，转到的登录页面。loginPage("/welcome")
-                .and()
-                .authorizeRequests()  // 定义哪些URL需要被保护、哪些不需要被保护
+        // 自定义登录页面  -- 未自定义登录界面 ，spring sercurity 自带有登录界面 localhost:8081/login
+        http.csrf().disable().formLogin().loginPage("/welcome").permitAll();
+        // 自定义注销
+        http.logout().logoutUrl("/logout").logoutSuccessUrl("/welcome")
+                .invalidateHttpSession(true);
+        //定义哪些URL需要被保护、哪些不需要被保护  拦截规则
+        http.authorizeRequests()  //
                 .antMatchers("/jsp/**").permitAll()
                 .antMatchers("/bo/**").permitAll()
                 .antMatchers("/index").permitAll()
                 .antMatchers("/user").hasRole("admin")//需要角色
                 .anyRequest().authenticated();    // 任何请求,登录后可以访问
-
-
-//        // 自定义登录页面
-//        http.csrf().disable().formLogin().loginPage("/login").permitAll();
-//        // 自定义注销
-//        http.logout().logoutUrl("/logout").logoutSuccessUrl("/login")
-//                .invalidateHttpSession(true);
 
         // session管理
 //        http.sessionManagement().sessionFixation().changeSessionId()
@@ -79,22 +65,39 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // RemeberMe  和UserDetailsService合作 用来保存用户信息， 一段时间内可以不用在输入用户名和密码登录，暂不使用该功能
 //        http.rememberMe().key("webmvc#FD637E6D9C0F1A5A67082AF56CE32485");
-
     }
 
-//    /*
-//     * 错误信息拦截器
-//     */
-//    @Bean(name = "accessDeniedHandler")
-//    public AccessDeniedHandlerImpl accessDeniedHandler() {
-//        System.out.println("spring security 错误拦截");
-//        AccessDeniedHandlerImpl accessDeniedHandler = new AccessDeniedHandlerImpl();
-//        accessDeniedHandler.setErrorPage("/error/403.jsp");
-//        return accessDeniedHandler;
+    /**
+     * 错误信息拦截器
+     **/
+    @Bean(name = "accessDeniedHandler")
+    public AccessDeniedHandlerImpl accessDeniedHandler() {
+        System.out.println("spring security 错误拦截");
+        AccessDeniedHandlerImpl accessDeniedHandler = new AccessDeniedHandlerImpl();
+        accessDeniedHandler.setErrorPage("/error/403.jsp");
+        return accessDeniedHandler;
+    }
+
+//<!------------------- SpringSecurity 正常配置启动，正常跳转到登录页 及 http 权限控制-------------------------------------->
+
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        //下面这两行配置表示在内存中配置了两个用户 密码明文：123
+//        auth.inMemoryAuthentication()
+//                .withUser("admin").roles("administrator").password("$2a$10$OR3VSksVAmCzc.7WeaRPR.t0wyCsIj24k0Bne8iKWV1o.V9wsP8Xe")
+//                .and()
+//                .withUser("janseny").roles("user").password("$2a$10$p1H8iWa8I4.CA.7Z8bwLjes91ZpY.rYREGHQEInNtAp4NzL6PLKxi");
+//    }
+//
+//    //设置密码的加密方式
+//    @Bean
+//    PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
 //    }
 
+
 //    /*
-//     * 表达式控制器
+//     * 表达式控制器  -- 扩展内容
 //     */
 //    @Bean(name = "expressionHandler")
 //    public DefaultWebSecurityExpressionHandler webSecurityExpressionHandler() {
