@@ -22,7 +22,8 @@
 		</encoder>
 	</appender>
 
-    <!-- Api Log Start -->
+    <!-- Api Log Start  定义三种等级，info,wanr,error 的日志打印规则-->
+    <!-- appender节点 负责写日志的组件，它有两个必要属性name和class。name指名称，class指指定类全限定名 -->
     <appender name="ApiInfoFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${log_home}/api/info/%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -68,11 +69,16 @@
         </filter>
     </appender>
 
-    <logger name="com.yihu.ehr.exception.GlobalExceptionHandler" level="WARN" additivity="false">
-        <appender-ref ref="console" />
-        <appender-ref ref="ApiInfoFile" />
-        <appender-ref ref="ApiWarnFile" />
-        <appender-ref ref="ApiErrorFile" />
+    <!-- logger节点 用来设置某一个包或具体的某一个类的日志打印级别、以及指定<appender>
+    可以包含零个或多个<appender-ref>元素 -->
+    <logger name="com.example.demo" level="WARN" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="ApiWarnFile"/>
+    </logger>
+
+    <logger name="org.springframework.data.jpa" level="Info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="ApiInfoFile"/>
     </logger>
     <!-- Api Log End -->
 

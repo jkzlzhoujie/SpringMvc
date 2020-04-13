@@ -12,20 +12,20 @@ function login() {
         window.location.href = domainName + "cmUser/findByName?name=" + username;
     } else {
         $.ajax({
-                type: "post",
-                url: domainName + "/cmUser/findByName",
-                data: {
-                    "name": username,
-                    "password": pass
-                },
-                dataType: "json",
-                success: function (data) {
-                    if(data == null){
-                        alert("请输入正确的用户名和密码！")
-                    }else {
-                        window.location.href = domainName + "hello";
-                    }
+            type: "post",
+            url: domainName + "/cmUser/findByName",
+            data: {
+                "loginName": username,
+                "password": pass
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data == null) {
+                    alert("请输入正确的用户名和密码！")
+                } else {
+                    window.location.href = domainName + "hello";
                 }
-            });
+            }
+        });
     }
 };

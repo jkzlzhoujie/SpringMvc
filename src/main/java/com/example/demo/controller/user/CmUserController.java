@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiParam;
 import jxl.Workbook;
 import org.quartz.ObjectAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,28 +34,70 @@ public class CmUserController extends BaseController {
     @Autowired
     private SchedulerHelper schedulerHelper;
 
-    @RequestMapping(value = "/getUserList",method = RequestMethod.GET)
+    /**
+     * 用户登录校验
+     *
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public Object loadUserByUsername(
+            @ApiParam(name = "loginName", value = "登录名", required = true)
+            @RequestParam(value = "loginName", required = false) String loginName,
+            @ApiParam(name = "password", value = "密码", required = true)
+            @RequestParam(value = "password", required = false) String password) {
+        System.out.println("用户登录安全校验");
+        UserDetails user = cmUserService.loadUserByUsername(loginName);
+        if (password.trim().equals(user.getPassword())) {
+            System.out.println("用户正确");
+            return true;
+        } else {
+            System.out.println("用户不正确");
+        }
+        return false;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/addUser", method = RequestMethod.GET)
+    public boolean addUser(
+            @ApiParam(name = "name", value = "姓名", required = true)
+            @RequestParam(value = "name", required = false) String name,
+            @ApiParam(name = "loginName", value = "登录名", required = true)
+            @RequestParam(value = "loginName", required = false) String loginName,
+            @ApiParam(name = "password", value = "密码", required = true)
+            @RequestParam(value = "password", required = false) String password) {
+        System.out.println("添加用户");
+        CmUserInfo user = new CmUserInfo();
+        user.setPassword(password);
+        user.setName(name);
+        user.setLoginName(loginName);
+        return cmUserService.createCmUserInfo(user);
+    }
+
+
+    @RequestMapping(value = "/getUserList", method = RequestMethod.GET)
     public String getUserList() throws Exception {
         String result = "user/userList";
         System.out.println(result);
         return result;
     }
 
-    @RequestMapping(value = "solrTest",method = RequestMethod.GET)
+    @RequestMapping(value = "solrTest", method = RequestMethod.GET)
     public void testSolr() throws Exception {
-        long c = solrUtil.count("new_core","");
+        long c = solrUtil.count("new_core", "");
         System.out.println("ss= " + c);
     }
 
-    @RequestMapping(value = "testScheduler",method = RequestMethod.GET)
+    @RequestMapping(value = "testScheduler", method = RequestMethod.GET)
     public void testScheduler() throws Exception {
         try {
-            Map<String,Object> params = new HashMap<>();
-            params.put("startTime","2018-12-04");
-            params.put("endTime","2018-12-04");
+            Map<String, Object> params = new HashMap<>();
+            params.put("startTime", "2018-12-04");
+            params.put("endTime", "2018-12-04");
             Class jobName = Class.forName("com.example.demo.job.SchedulerJob");
 //            schedulerHelper.startNow(jobName, "sdddd", params);
-            schedulerHelper.addJob(jobName,"10 27 11 * * ?","sdwewre", params);
+            schedulerHelper.addJob(jobName, "10 27 11 * * ?", "sdwewre", params);
         } catch (Exception e) {
             throw new ObjectAlreadyExistsException("job 已存在！");
         }
@@ -63,59 +106,59 @@ public class CmUserController extends BaseController {
 
 
     @ResponseBody
-    @RequestMapping(value = "findByName",method = RequestMethod.GET)
+    @RequestMapping(value = "findByName", method = RequestMethod.GET)
     public CmUserInfo findByName(
             @ApiParam(name = "name", value = "姓名", required = false)
-            @RequestParam(value = "name",required = false)String name ){
-          CmUserInfo cmUserInfo = cmUserService.findByName(name);
-          if(cmUserInfo != null){
-              System.out.println("用户：" + cmUserInfo.getName());
-          }else {
-              System.out.println("么有找到用户");
-          }
+            @RequestParam(value = "name", required = false) String name) {
+        CmUserInfo cmUserInfo = cmUserService.findByName(name);
+        if (cmUserInfo != null) {
+            System.out.println("用户：" + cmUserInfo.getName());
+        } else {
+            System.out.println("么有找到用户");
+        }
         return cmUserInfo;
     }
 
     @ResponseBody
-    @RequestMapping(value = "findAllUser",method = RequestMethod.GET,produces = "application/json;charset=utf-8")
-    public Object findByName(){
+    @RequestMapping(value = "findAllUser", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    public Object findByName() {
         List<CmUserInfo> userInfos = cmUserService.findAll();
         System.out.println("总共有用户：" + userInfos.size());
         return userInfos;
     }
 
     @ResponseBody
-    @RequestMapping(value = "findById",method = RequestMethod.GET)
+    @RequestMapping(value = "findById", method = RequestMethod.GET)
     public Object findById(
             @ApiParam(name = "id", value = "自增ID", required = false)
-            @RequestParam(value = "id",required = false)long id ){
+            @RequestParam(value = "id", required = false) long id) {
         CmUserInfo cmUserInfo = cmUserService.findById(id);
         return cmUserInfo;
     }
 
-    @RequestMapping(value = "export",method = RequestMethod.GET)
+    @RequestMapping(value = "export", method = RequestMethod.GET)
     public void export(
             @ApiParam(name = "id", value = "自增ID", required = false)
-            @RequestParam(value = "id",required = false)long id ,
-            HttpServletResponse response){
+            @RequestParam(value = "id", required = false) long id,
+            HttpServletResponse response) {
         try {
             CmUserInfo cmUserInfo = cmUserService.findById(id);
             response.setContentType("octets/stream");
-            response.setHeader("Content-Disposition", "attachment; filename="+ System.currentTimeMillis() + new String(".xls"));
+            response.setHeader("Content-Disposition", "attachment; filename=" + System.currentTimeMillis() + new String(".xls"));
             OutputStream os = response.getOutputStream();
-            List<Map<String,Object>> listMap = new ArrayList<>();
-            Map<String,Object> dataMap = new HashMap<>();
-            dataMap.put("name",cmUserInfo.getName());
-            dataMap.put("wallet",cmUserInfo.getWallet());
+            List<Map<String, Object>> listMap = new ArrayList<>();
+            Map<String, Object> dataMap = new HashMap<>();
+            dataMap.put("name", cmUserInfo.getName());
+            dataMap.put("wallet", cmUserInfo.getWallet());
             listMap.add(dataMap);
 
-            Map<Integer,String> columnMap = new HashMap<>();
-            columnMap.put(0,"name");
-            columnMap.put(1,"wallet");
-            String[] header =  {"姓名","钱包（元）"};
+            Map<Integer, String> columnMap = new HashMap<>();
+            columnMap.put(0, "name");
+            columnMap.put(1, "wallet");
+            String[] header = {"姓名", "钱包（元）"};
             WorkbookUtil workbookUtil = new WorkbookUtil();
             workbookUtil.write(Workbook.createWorkbook(os), listMap, columnMap, header);
-        }catch (Exception e){
+        } catch (Exception e) {
             error(e);
         }
 

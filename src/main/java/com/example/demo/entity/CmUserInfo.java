@@ -12,20 +12,40 @@ import java.util.Date;
 @Table(name = "cm_user_info")
 public class CmUserInfo extends IdEntity{
 
+	private String loginName;
+	private String password;
 	private String name;			//姓名
-	private Integer sex;			//性别  0 女 1 男 
+	private Integer sex;			//性别  0 女 1 男
 	private String age ;			//年龄
 	private String phone;			//联系电话
-	private Long city ;			//城市
+	private Long city ;				//城市
 	private String work;			//职业
 	private String openId;			//微信openId
-	private String headImageUrl;   //头像url
-	private Double wallet;		//钱包余额
+	private String headImageUrl;    //头像url
+	private Double wallet;			//钱包余额
 	private Integer status ;		//状态 1 正常 2 冻结
 	private Date createTime;		//创建时间
 	private Date updateTime;		//修改时间
 
 	public CmUserInfo() {}
+
+	@Column(name = "loginName")
+	public String getLoginName() {
+		return loginName;
+	}
+
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
+	}
+
+	@Column(name = "password")
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	@Column(name = "name")
 	public String getName() {
@@ -122,10 +142,10 @@ public class CmUserInfo extends IdEntity{
 	public void setOpenId(String openId) {
 		this.openId = openId;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 
 }

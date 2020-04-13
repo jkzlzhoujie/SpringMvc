@@ -9,8 +9,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
@@ -30,7 +34,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * 静态资源被拦截的问题  设置拦截规则
-     *
      **/
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -80,20 +83,20 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 //<!------------------- SpringSecurity 正常配置启动，正常跳转到登录页 及 http 权限控制-------------------------------------->
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        //下面这两行配置表示在内存中配置了两个用户 密码明文：123
-//        auth.inMemoryAuthentication()
-//                .withUser("admin").roles("administrator").password("$2a$10$OR3VSksVAmCzc.7WeaRPR.t0wyCsIj24k0Bne8iKWV1o.V9wsP8Xe")
-//                .and()
-//                .withUser("janseny").roles("user").password("$2a$10$p1H8iWa8I4.CA.7Z8bwLjes91ZpY.rYREGHQEInNtAp4NzL6PLKxi");
-//    }
-//
-//    //设置密码的加密方式
-//    @Bean
-//    PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        //下面这两行配置表示在内存中配置了两个用户 密码明文：123
+        auth.inMemoryAuthentication()
+                .withUser("admin").roles("administrator").password("$2a$10$OR3VSksVAmCzc.7WeaRPR.t0wyCsIj24k0Bne8iKWV1o.V9wsP8Xe")
+                .and()
+                .withUser("janseny").roles("user").password("$2a$10$p1H8iWa8I4.CA.7Z8bwLjes91ZpY.rYREGHQEInNtAp4NzL6PLKxi");
+    }
+
+    //设置密码的加密方式
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 
 //    /*
@@ -104,14 +107,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 //        DefaultWebSecurityExpressionHandler webSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
 //        return webSecurityExpressionHandler;
 //    }
-
-
-
-
-
-
-
-
 
 
 }
