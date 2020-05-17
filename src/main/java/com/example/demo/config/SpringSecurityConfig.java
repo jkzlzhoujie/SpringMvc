@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 import com.example.demo.filter.AccessDecisionManagerImpl;
 import com.example.demo.service.CmUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionManager;
@@ -33,6 +34,8 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     /**
      * 静态资源被拦截的问题  设置拦截规则
@@ -65,19 +68,32 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         // session管理
 //        http.sessionManagement().sessionFixation().changeSessionId()
 //                .maximumSessions(1).expiredUrl("/");
-
         // RemeberMe  和UserDetailsService合作 用来保存用户信息， 一段时间内可以不用在输入用户名和密码登录，暂不使用该功能
 //        http.rememberMe().key("webmvc#FD637E6D9C0F1A5A67082AF56CE32485");
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        String password ="123";
-//        方法1 ：下面这两行配置表示在内存中配置了两个用户 密码明文：123
-        auth.inMemoryAuthentication()
-                .withUser("admin").roles("administrator").password(password)
-                .and()
-                .withUser("janseny").roles("user").password(password);
+
+////      方法1 ：下面这两行配置表示在内存中配置了两个用户 密码明文：123
+//        String password ="123";
+//        auth.inMemoryAuthentication()
+//                .withUser("admin").roles("administrator").password(password)
+//                .and()
+//                .withUser("janseny").roles("user").password(password);
+
+
+//      方法2 ： 自定义 通过数据库查询方式 自定义的实现类
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    /**
+     * 定义安全验证 密码器
+     * @return
+     */
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
 }

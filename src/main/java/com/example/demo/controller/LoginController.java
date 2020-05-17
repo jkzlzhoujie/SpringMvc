@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
+
 /**
  * Created by janseny on 2018/11/28.
  */
@@ -44,6 +47,17 @@ public class LoginController {
     public String loginSuccess(){
         System.out.println("/login/index");
         return "login/index";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/login/out",produces="application/json;charset=utf-8")
+    public String loginOut(HttpServletRequest request){
+        System.out.println("/login/out");
+        Enumeration em = request.getSession().getAttributeNames();  //得到session中所有的属性名
+        while (em.hasMoreElements()) {
+        request.getSession().removeAttribute(em.nextElement().toString()); //遍历删除session中的值
+        }
+        return "loginOut success";
     }
 
     @RequestMapping(value = "/home",produces="application/json;charset=utf-8")

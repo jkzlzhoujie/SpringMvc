@@ -46,7 +46,8 @@ public class CmUserService implements UserDetailsService {
         }
         String password = cmUserInfo.getPassword();
         if(StringUtils.isEmpty(password)){
-            password = "123456";
+            BCryptPasswordEncoder passEncoder = new BCryptPasswordEncoder();
+            cmUserInfo.setName(passEncoder.encode("123456"));
         }
         // 封装用户信息，并返回。参数分别是：用户名，密码，用户权限
         UserDetails userDetails = User.withUsername(loginName).password(cmUserInfo.getPassword()).authorities("admin").build();
@@ -55,8 +56,8 @@ public class CmUserService implements UserDetailsService {
 
     public boolean createCmUserInfo(CmUserInfo user) {
         //进行加密
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword().trim()));
+        BCryptPasswordEncoder passEncoder = new BCryptPasswordEncoder();
+        user.setPassword(passEncoder.encode(user.getPassword().trim()));
         CmUserInfo cmUserInfo = cmUserDao.save(user);
         if (cmUserInfo != null) {
             return true;
