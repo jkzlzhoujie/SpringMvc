@@ -34,30 +34,6 @@ public class CmUserController extends BaseController {
     @Autowired
     private SchedulerHelper schedulerHelper;
 
-    /**
-     * 用户登录校验
-     *
-     * @return
-     * @throws Exception
-     */
-    @ResponseBody
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Object loadUserByUsername(
-            @ApiParam(name = "loginName", value = "登录名", required = true)
-            @RequestParam(value = "loginName", required = false) String loginName,
-            @ApiParam(name = "password", value = "密码", required = true)
-            @RequestParam(value = "password", required = false) String password) {
-        System.out.println("用户登录安全校验");
-        UserDetails user = cmUserService.loadUserByUsername(loginName);
-        if (password.trim().equals(user.getPassword())) {
-            System.out.println("用户正确");
-            return true;
-        } else {
-            System.out.println("用户不正确");
-        }
-        return false;
-    }
-
     @ResponseBody
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
     public boolean addUser(
