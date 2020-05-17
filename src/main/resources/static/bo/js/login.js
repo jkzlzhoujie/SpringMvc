@@ -9,21 +9,22 @@ function login() {
     } else if (pass == "") {
         alert("请输入密码");
     } else if (username == "admin" && pass == "123456") {
-        window.location.href = domainName + "cmUser/findByName?name=" + username;
+        alert(pass);
+        window.location.href = domainName + "/cmUser/findByName?name=" + username;
     } else {
         $.ajax({
-            type: "post",
-            url: domainName + "/cmUser/findByName",
+            url: domainName + "/login",
+            type: 'post',
             data: {
-                "loginName": username,
-                "password": pass
+                loginName: username,
+                password: pass
             },
             dataType: "json",
             success: function (data) {
                 if (data == null) {
                     alert("请输入正确的用户名和密码！")
                 } else {
-                    window.location.href = domainName + "hello";
+                   // window.location.href = domainName + "hello";
                 }
             }
         });

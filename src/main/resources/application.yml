@@ -1,6 +1,6 @@
 #项目启动
 server:
-  port: 8081
+  port: 8080
   session-timeout: 3000000
   context-path: /    #　配置访问时的项目名
 

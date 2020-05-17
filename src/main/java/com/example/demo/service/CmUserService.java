@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dao.CmUserDao;
 import com.example.demo.entity.CmUserInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,6 @@ public class CmUserService implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsService.class);
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private CmUserDao cmUserDao;
 
     /**
@@ -43,14 +41,16 @@ public class CmUserService implements UserDetailsService {
         logger.info("用户的用户名: {}", loginName);
         // 根据用户名，查找到对应的密码，与权限
         CmUserInfo cmUserInfo = cmUserDao.findByName(loginName);
+        if(cmUserInfo == null){
+            return  null;
+        }
         String password = cmUserInfo.getPassword();
-        password = passwordEncoder.encode(password);
-        logger.info("password: {}", password);
-
+        if(StringUtils.isEmpty(password)){
+            password = "123456";
+        }
         // 封装用户信息，并返回。参数分别是：用户名，密码，用户权限
-        User user = new User(loginName, password,
-                AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
-        return user;
+        UserDetails userDetails = User.withUsername(loginName).password(cmUserInfo.getPassword()).authorities("admin").build();
+        return userDetails;
     }
 
     public boolean createCmUserInfo(CmUserInfo user) {

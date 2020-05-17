@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import com.example.demo.filter.AccessDecisionManagerImpl;
+import com.example.demo.service.CmUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionManager;
@@ -32,6 +33,7 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
+
     /**
      * 静态资源被拦截的问题  设置拦截规则
      **/
@@ -44,23 +46,21 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         );
     }
 
-    /**
-     * 设置  Http 请求的 拦截规则
-     **/
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // 自定义登录页面  -- 未自定义登录界面 ，spring sercurity 自带有登录界面 localhost:8081/login
-        http.csrf().disable().formLogin().loginPage("/welcome").permitAll();
-        // 自定义注销
-        http.logout().logoutUrl("/logout").logoutSuccessUrl("/welcome")
-                .invalidateHttpSession(true);
-        //定义哪些URL需要被保护、哪些不需要被保护  拦截规则
-        http.authorizeRequests()  //
-                .antMatchers("/jsp/**").permitAll()
-                .antMatchers("/bo/**").permitAll()
-                .antMatchers("/index").permitAll()
-                .antMatchers("/user").hasRole("admin")//需要角色
-                .anyRequest().authenticated();    // 任何请求,登录后可以访问
+        //以下五步是表单登录进行身份认证最简单的登陆环境
+        http.formLogin() //表单登陆 1
+                .loginPage("/welcome")//自定义登录页
+                .loginProcessingUrl("/authentication/form")//登陆页面提交的页面 开始使用UsernamePasswordAuthenticationFilter过滤器处理请求
+                .successForwardUrl("/login/success")//自定义登录成功跳转接口
+                .and() //2
+                .authorizeRequests() //下面的都是授权的配置 3
+                .antMatchers("/welcome").permitAll()//访问此地址就不需要进行身份认证了，防止重定向死循环
+                .antMatchers("/authentication/form").permitAll()
+                .anyRequest() //任何请求 4
+                .authenticated() //访问任何资源都需要身份认证 5
+                .and()
+                .csrf().disable();//关闭跨站请求伪造攻击拦截
 
         // session管理
 //        http.sessionManagement().sessionFixation().changeSessionId()
@@ -70,43 +70,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 //        http.rememberMe().key("webmvc#FD637E6D9C0F1A5A67082AF56CE32485");
     }
 
-    /**
-     * 错误信息拦截器
-     **/
-    @Bean(name = "accessDeniedHandler")
-    public AccessDeniedHandlerImpl accessDeniedHandler() {
-        System.out.println("spring security 错误拦截");
-        AccessDeniedHandlerImpl accessDeniedHandler = new AccessDeniedHandlerImpl();
-        accessDeniedHandler.setErrorPage("/error/403.jsp");
-        return accessDeniedHandler;
-    }
-
-//<!------------------- SpringSecurity 正常配置启动，正常跳转到登录页 及 http 权限控制-------------------------------------->
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //下面这两行配置表示在内存中配置了两个用户 密码明文：123
+        String password ="123";
+//        方法1 ：下面这两行配置表示在内存中配置了两个用户 密码明文：123
         auth.inMemoryAuthentication()
-                .withUser("admin").roles("administrator").password("$2a$10$OR3VSksVAmCzc.7WeaRPR.t0wyCsIj24k0Bne8iKWV1o.V9wsP8Xe")
+                .withUser("admin").roles("administrator").password(password)
                 .and()
-                .withUser("janseny").roles("user").password("$2a$10$p1H8iWa8I4.CA.7Z8bwLjes91ZpY.rYREGHQEInNtAp4NzL6PLKxi");
+                .withUser("janseny").roles("user").password(password);
     }
-
-    //设置密码的加密方式
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
-//    /*
-//     * 表达式控制器  -- 扩展内容
-//     */
-//    @Bean(name = "expressionHandler")
-//    public DefaultWebSecurityExpressionHandler webSecurityExpressionHandler() {
-//        DefaultWebSecurityExpressionHandler webSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
-//        return webSecurityExpressionHandler;
-//    }
-
 
 }

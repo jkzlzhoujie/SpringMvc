@@ -41,7 +41,7 @@ public class CmUserController extends BaseController {
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Object loadUserByUsername(
             @ApiParam(name = "loginName", value = "登录名", required = true)
             @RequestParam(value = "loginName", required = false) String loginName,
@@ -59,7 +59,7 @@ public class CmUserController extends BaseController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/addUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/addUser", method = RequestMethod.POST)
     public boolean addUser(
             @ApiParam(name = "name", value = "姓名", required = true)
             @RequestParam(value = "name", required = false) String name,
