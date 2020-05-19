@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
  * @Date: 2020/5/17
  * //认证服务器
  */
-//@Order(6)
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
@@ -39,6 +38,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        //采用缓存模式
         clients.inMemory().withClient("internet_plus")
                 .secret("internet_plus")
                 //有效时间 2小时
@@ -46,6 +46,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 //密码授权模式和刷新令牌
                 .authorizedGrantTypes("refresh_token", "password")
                 .scopes("all");
+        //可以采用数据库模式
     }
 
     @Override
