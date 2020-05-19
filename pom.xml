@@ -98,12 +98,20 @@
 		</dependency>
 		<!-- 正常启动，数据库访问 end -->
 
-		<!-- security，网页接口安全 start-->
+		<!-- security，网页接口安全 密码模式 start-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		<!-- 正常访问 security 网页接口安全-->
+		<!-- 正常访问 security 网页接口安全 密码模式 end-->
+
+		<!-- security oauth，客户端模式 start-->
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>2.0.15.RELEASE</version>
+		</dependency>
+		<!-- security oauth，客户端模式 end -->
 
 		<!-- JSON start -->
 		<dependency>

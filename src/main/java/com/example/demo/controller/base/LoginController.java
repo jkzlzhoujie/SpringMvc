@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.controller.base;
 
 import com.example.demo.service.CmUserService;
 import io.swagger.annotations.ApiParam;
